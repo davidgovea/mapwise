@@ -6,3 +6,4 @@
 .repomixignore
 bun.lock
 .gitignore
+prompts.txt

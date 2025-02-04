@@ -1,0 +1,39 @@
+Today we're creating an alternative to lodash's keyBy/groupBy functions, in TypeScript. Ours will return a `Map` instead of a `Record` like lodash does, and will have full type safety.
+
+Lodash has a signature like:
+```
+_.keyBy(collection, [iteratee=_.identity])
+
+collection (Array|Object): The collection to iterate over.
+[iteratee=_.identity] (Function): The iteratee to transform keys.
+```
+
+We will require an input array of `(SomeObject | null | undefined)[]`, and our "key getter" will be either a string or a function. The string form will smooth over the possibility of a null record, but the function form will pass the full type through for consumers to use.
+
+I would like you to please:
+Please provide a sequence of setup steps for the project, **using bun** as the dependency manager and test system.
+
+Then, provide test code that will verify functionality AND proper types (you may use directives like `// @ts-expect-error` to verify type errors on bad usage.
+The tests should be comprehensive and verify the full suite of functionalities.
+
+
+---
+
+
+Excellent. The code and tests are working nicely.
+
+But we need to tighten up the types. Currently:
+
+const result = keyBy(people, "id");
+results in
+const result: Map<string | number, Person>
+
+We want this to be `Map<number, Person>`, considering the type of `id`
+Likewise, keyBy(people, 'group') would be Map<string, Person>
+
+Also, the function form of the key getter should not require a `string` return type. Maps can handle many types -- let's use them! The return type should be inferred and then be used in the result map.
+
+
+---
+
+
