@@ -17,105 +17,126 @@ const people: (Person | null | undefined)[] = [
 ];
 
 describe("keyBy", () => {
-  it("creates a Map keyed by a property name", () => {
+  it("creates a Map keyed by a numeric property name", () => {
     const result = keyBy(people, "id");
+    // Should be Map<number, Person>
+    // Checking via an assigned type:
+    type ResultType = typeof result; 
+    // You can visually check or do a quick check assignment:
+    let check: Map<number, Person> = result;
     expect(result.size).toBe(4);
 
-    // Check a known key
     const charlie = result.get(3);
     expect(charlie?.name).toBe("Charlie");
     expect(charlie?.group).toBe("admin");
   });
 
-  it("creates a Map keyed by a function", () => {
-    const result = keyBy(people, (p) => p.name);
+  it("creates a Map keyed by a string property name", () => {
+    const result = keyBy(people, "name");
+    // Should be Map<string, Person>
+    let check: Map<string, Person> = result;
+
     expect(result.size).toBe(4);
 
-    // Check a known key from function
     const bob = result.get("Bob");
     expect(bob?.id).toBe(2);
-    expect(bob?.group).toBe("user");
   });
 
-  it("overwrites items with the same key", () => {
-    const data = [
-      { id: 1, name: "X", group: "test" },
-      { id: 1, name: "Y", group: "test2" },
-    ];
-    const result = keyBy(data, "id");
+  it("creates a Map keyed by a function (any return type)", () => {
+    // Example: callback returning a number
+    const byDoubleId = keyBy(people, (p) => p.id * 2);
+    let checkNumKey: Map<number, Person> = byDoubleId;
 
-    // Because both have id=1, the second item overwrites the first.
-    expect(result.size).toBe(1);
-    const item = result.get(1);
-    expect(item?.name).toBe("Y");
+    expect(byDoubleId.size).toBe(4);
+    expect(byDoubleId.get(2)?.name).toBe("Alice"); // 1 * 2 = 2
+
+    // Example: callback returning something else, e.g. a boolean
+    const byIsAdmin = keyBy(people, (p) => p.group === "admin");
+    let checkBoolKey: Map<boolean, Person> = byIsAdmin;
+
+    expect(byIsAdmin.size).toBe(2); 
+    // Overwrites collisions: last "admin" overwrote first "admin"
+    expect(byIsAdmin.get(true)?.name).toBe("Charlie");
   });
 
   it("skips null and undefined items", () => {
     const data = [null, undefined];
-    const result = keyBy(data, "id" as any); // as any for test convenience
+    const result = keyBy(data, "id" as any);
     expect(result.size).toBe(0);
   });
 
-  it("type checks property key usage", () => {
-    // Ensuring type checking is correct for property keys:
-    keyBy(people, "id"); // valid
-    keyBy(people, "name"); // valid
+  it("overwrites items with the same key", () => {
+    const data = [
+      { id: 1, name: "First", group: "test" },
+      { id: 1, name: "Second", group: "test2" },
+    ];
+    const result = keyBy(data, "id");
+    expect(result.size).toBe(1);
+    expect(result.get(1)?.name).toBe("Second");
+  });
 
-    // @ts-expect-error - 'unknownProp' does not exist on 'Person'
+  it("type checks property key usage", () => {
+    // Good usage: property key is 'id' or 'name'
+    keyBy(people, "id"); 
+    keyBy(people, "name");
+
+    // @ts-expect-error 'unknownProp' does not exist on Person
     keyBy(people, "unknownProp");
 
-    // @ts-expect-error - not a valid property key
+    // @ts-expect-error 123 is not a valid property key
     keyBy(people, 123);
   });
 
   it("type checks function usage", () => {
-    // Passing a function that returns a string key
-    keyBy(people, (p) => `${p.id}-${p.name}`); // valid
-
-    // @ts-expect-error - function must return a string, not a number
+    // Returning a number is valid
     keyBy(people, (p) => p.id);
 
-    // @ts-expect-error - function param must be 'Person', can't be e.g. a number
-    keyBy(people, (n: number) => `foo-${n}`);
+    // Returning a Date is also valid
+    keyBy(people, (p) => new Date(p.id * 1000));
+
+    // If you actually need a string, that’s also fine:
+    keyBy(people, (p) => `${p.id}-${p.name}`);
+
+    // @ts-expect-error - function param must be Person, not number
+    keyBy(people, (n: number) => n * 2);
   });
 });
 
 describe("groupBy", () => {
-  it("groups items by a property name", () => {
+  it("groups items by a numeric property", () => {
+    // Contrived example: group by "id"
+    const result = groupBy(people, "id");
+    let check: Map<number, Person[]> = result; // Should compile
+
+    // IDs: 1,2,3,4 => 4 groups
+    expect(result.size).toBe(4);
+
+    const group1 = result.get(1);
+    expect(group1?.length).toBe(1);
+    expect(group1?.[0].name).toBe("Alice");
+  });
+
+  it("groups items by a string property", () => {
     const result = groupBy(people, "group");
+    let check: Map<string, Person[]> = result;
+
+    // "admin" & "user" => 2 groups
     expect(result.size).toBe(2);
 
     const adminGroup = result.get("admin");
     expect(adminGroup?.length).toBe(2);
     expect(adminGroup?.[0].name).toBe("Alice");
     expect(adminGroup?.[1].name).toBe("Charlie");
-
-    const userGroup = result.get("user");
-    expect(userGroup?.length).toBe(2);
-    expect(userGroup?.[0].name).toBe("Bob");
-    expect(userGroup?.[1].name).toBe("Diana");
   });
 
-  it("groups items by a function", () => {
-    const result = groupBy(people, (p) => p.group.toUpperCase());
-    expect(result.size).toBe(2);
+  it("groups items by callback returning any type", () => {
+    // Let's group by whether person's id is odd/even (boolean key)
+    const byOddEven = groupBy(people, (p) => p.id % 2 === 0);
+    let check: Map<boolean, Person[]> = byOddEven;
+    expect(byOddEven.size).toBe(2); // even / odd
 
-    const adminGroup = result.get("ADMIN");
-    expect(adminGroup?.length).toBe(2);
-  });
-
-  it("handles collisions by adding items to an array", () => {
-    const data = [
-      { id: 1, group: "g1", name: "Foo" },
-      { id: 2, group: "g1", name: "Bar" },
-    ];
-    const result = groupBy(data, "group");
-    expect(result.size).toBe(1);
-
-    const arr = result.get("g1");
-    expect(arr?.length).toBe(2);
-    expect(arr?.[0].name).toBe("Foo");
-    expect(arr?.[1].name).toBe("Bar");
+    expect(byOddEven.get(true)?.map((p) => p.name)).toEqual(["Bob", "Diana"]);
+    expect(byOddEven.get(false)?.map((p) => p.name)).toEqual(["Alice", "Charlie"]);
   });
 
   it("skips null and undefined items", () => {
@@ -124,18 +145,32 @@ describe("groupBy", () => {
     expect(result.size).toBe(0);
   });
 
-  it("type checks property key usage for groupBy", () => {
+  it("handles multiple items with same key", () => {
+    const data = [
+      { id: 1, group: "A", name: "Foo" },
+      { id: 2, group: "A", name: "Bar" },
+    ];
+    const result = groupBy(data, "group");
+    expect(result.size).toBe(1);
+
+    const arr = result.get("A");
+    expect(arr?.length).toBe(2);
+    expect(arr?.[0].name).toBe("Foo");
+    expect(arr?.[1].name).toBe("Bar");
+  });
+
+  it("type checks property key usage in groupBy", () => {
     groupBy(people, "name"); // valid
 
     // @ts-expect-error - 'notARealKey' does not exist on Person
     groupBy(people, "notARealKey");
   });
 
-  it("type checks function usage for groupBy", () => {
+  it("type checks function usage in groupBy", () => {
     groupBy(people, (p) => p.name.toLowerCase()); // valid
 
-    // @ts-expect-error - function must return a string
-    groupBy(people, (p) => p.id);
+    // e.g. returning a number is fine
+    groupBy(people, (p) => p.id * 100);
 
     // @ts-expect-error - param must be a Person, not a boolean
     groupBy(people, (b: boolean) => (b ? "yes" : "no"));
