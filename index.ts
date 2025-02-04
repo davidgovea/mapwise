@@ -23,7 +23,7 @@ export function keyBy<
 >(
   items: (T | null | undefined)[],
   key: K,
-  value: (item: T) => V
+  value: (item: T, index: number) => V
 ): Map<T[K], V>;
 
 export function keyBy<
@@ -31,7 +31,7 @@ export function keyBy<
   K
 >(
   items: (T | null | undefined)[],
-  key: (item: T) => K
+  key: (item: T, index: number) => K
 ): Map<K, T>;
 
 export function keyBy<
@@ -40,7 +40,7 @@ export function keyBy<
   V extends keyof T
 >(
   items: (T | null | undefined)[],
-  key: (item: T) => K,
+  key: (item: T, index: number) => K,
   value: V
 ): Map<K, T[V]>;
 
@@ -50,8 +50,8 @@ export function keyBy<
   V
 >(
   items: (T | null | undefined)[],
-  key: (item: T) => K,
-  value: (item: T) => V
+  key: (item: T, index: number) => K,
+  value: (item: T, index: number) => V
 ): Map<K, V>;
 
 /**
@@ -60,25 +60,27 @@ export function keyBy<
  */
 export function keyBy<T extends object>(
   items: (T | null | undefined)[],
-  keyOrFn: keyof T | ((item: T) => unknown),
-  valueOrFn?: keyof T | ((item: T) => unknown)
+  keyOrFn: keyof T | ((item: T, index: number) => unknown),
+  valueOrFn?: keyof T | ((item: T, index: number) => unknown)
 ): Map<unknown, unknown> {
   const map = new Map<unknown, unknown>();
-  for (const item of items) {
-    if (item == null) continue;
+  items.forEach((item, index) => {
+    if (item == null) return;
 
     const mapKey =
-      typeof keyOrFn === "function" ? keyOrFn(item) : item[keyOrFn];
+      typeof keyOrFn === "function"
+        ? keyOrFn(item, index)
+        : item[keyOrFn];
 
     const mapValue =
       valueOrFn == null
         ? item
         : typeof valueOrFn === "function"
-        ? valueOrFn(item)
-        : item[valueOrFn];
+          ? valueOrFn(item, index)
+          : item[valueOrFn];
 
     map.set(mapKey, mapValue);
-  }
+  });
   return map;
 }
 
@@ -107,7 +109,7 @@ export function groupBy<
 >(
   items: (T | null | undefined)[],
   key: K,
-  value: (item: T) => V
+  value: (item: T, index: number) => V
 ): Map<T[K], Array<V>>;
 
 export function groupBy<
@@ -115,7 +117,7 @@ export function groupBy<
   K
 >(
   items: (T | null | undefined)[],
-  key: (item: T) => K
+  key: (item: T, index: number) => K
 ): Map<K, T[]>;
 
 export function groupBy<
@@ -124,7 +126,7 @@ export function groupBy<
   V extends keyof T
 >(
   items: (T | null | undefined)[],
-  key: (item: T) => K,
+  key: (item: T, index: number) => K,
   value: V
 ): Map<K, Array<T[V]>>;
 
@@ -134,8 +136,8 @@ export function groupBy<
   V
 >(
   items: (T | null | undefined)[],
-  key: (item: T) => K,
-  value: (item: T) => V
+  key: (item: T, index: number) => K,
+  value: (item: T, index: number) => V
 ): Map<K, Array<V>>;
 
 /**
@@ -144,23 +146,25 @@ export function groupBy<
  */
 export function groupBy<T extends object>(
   items: (T | null | undefined)[],
-  keyOrFn: keyof T | ((item: T) => unknown),
-  valueOrFn?: keyof T | ((item: T) => unknown)
+  keyOrFn: keyof T | ((item: T, index: number) => unknown),
+  valueOrFn?: keyof T | ((item: T, index: number) => unknown)
 ): Map<unknown, unknown[]> {
   const map = new Map<unknown, unknown[]>();
 
-  for (const item of items) {
-    if (item == null) continue;
+  items.forEach((item, index) => {
+    if (item == null) return;
 
     const mapKey =
-      typeof keyOrFn === "function" ? keyOrFn(item) : item[keyOrFn];
+      typeof keyOrFn === "function"
+        ? keyOrFn(item, index)
+        : item[keyOrFn];
 
     const mapValue =
       valueOrFn == null
         ? item
         : typeof valueOrFn === "function"
-        ? valueOrFn(item)
-        : item[valueOrFn];
+          ? valueOrFn(item, index)
+          : item[valueOrFn];
 
     const existing = map.get(mapKey);
     if (existing) {
@@ -168,6 +172,7 @@ export function groupBy<T extends object>(
     } else {
       map.set(mapKey, [mapValue]);
     }
-  }
+  });
+
   return map;
 }

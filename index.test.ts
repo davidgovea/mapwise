@@ -20,7 +20,7 @@ describe("keyBy", () => {
   it("creates a Map keyed by a numeric property name", () => {
     const result = keyBy(people, "id");
     // Should be Map<number, Person>
-    type ResultType = typeof result; 
+    type ResultType = typeof result;
     let check: Map<number, Person> = result;
     expect(result.size).toBe(4);
 
@@ -71,7 +71,7 @@ describe("keyBy", () => {
 
   it("type checks property key usage", () => {
     // Good usage: property key is 'id' or 'name'
-    keyBy(people, "id"); 
+    keyBy(people, "id");
     keyBy(people, "name");
 
     // @ts-expect-error 'unknownProp' does not exist on Person
@@ -101,7 +101,7 @@ describe("keyBy", () => {
   });
 
   it("allows specifying a function value for the map value", () => {
-    // key by "name", value is (p) => p.group
+    // key by "name", value is (p) => p.group.toUpperCase()
     const result = keyBy(people, "name", (p) => p.group.toUpperCase());
     let check: Map<string, string> = result;
 
@@ -118,10 +118,22 @@ describe("keyBy", () => {
     // Notice collisions can happen: "Bob" (3 letters) and "Eve" (3 letters) etc.
     // Here, we only have "Alice"(5), "Bob"(3), "Charlie"(7), "Diana"(5).
     // So final map size might reflect overwrites for same lengths.
-    expect(Array.from(result.keys()).sort()).toEqual([3,5,7]);
+    expect(Array.from(result.keys()).sort()).toEqual([3, 5, 7]);
     expect(result.get(3)).toBe("BOB"); // Bob overwrote any other length=3
     expect(result.get(5)).toBe("DIANA");
     expect(result.get(7)).toBe("CHARLIE");
+  });
+
+  it("provides the item index to function-based getters", () => {
+    const indexedMap = keyBy(
+      people,
+      (person, idx) => `${person.group}-${idx}`,
+      (person, idx) => `${person.name}:${idx}`
+    );
+
+    expect(indexedMap.get("admin-0")).toBe("Alice:0");
+    expect(indexedMap.get("user-1")).toBe("Bob:1");
+    expect(indexedMap.get("admin-3")).toBe("Charlie:3");
   });
 });
 
@@ -215,5 +227,17 @@ describe("groupBy", () => {
 
     const userGroup = result.get("user");
     expect(userGroup).toEqual(["BOB", "DIANA"]);
+  });
+
+  it("provides the item index to function-based getters", () => {
+    const indexedGroups = groupBy(
+      people,
+      (person, idx) => `${person.group}-${idx}`,
+      (person, idx) => `${person.name}:${idx}`
+    );
+
+    expect(indexedGroups.get("admin-0")).toEqual(["Alice:0"]);
+    expect(indexedGroups.get("user-1")).toEqual(["Bob:1"]);
+    expect(indexedGroups.get("admin-3")).toEqual(["Charlie:3"]);
   });
 });
