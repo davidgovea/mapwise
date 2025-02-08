@@ -3,7 +3,7 @@ export interface ByOptions {
 }
 
 /* -----------------------------------------------------
-   KEYBY: property-based key, no "value getter"
+   KEYBY: property‑based key, no "value getter"
 ------------------------------------------------------ */
 export function keyBy<
   T extends object,
@@ -22,7 +22,7 @@ export function keyBy<
 ): Map<T[K], T>;
 
 /* -----------------------------------------------------
-   KEYBY: property-based key, property-based value
+   KEYBY: property‑based key, property‑based value
 ------------------------------------------------------ */
 export function keyBy<
   T extends object,
@@ -45,8 +45,9 @@ export function keyBy<
 ): Map<T[K], T[V]>;
 
 /* -----------------------------------------------------
-   KEYBY: property-based key, function-based value
+   KEYBY: property‑based key, function‑based value
 ------------------------------------------------------ */
+// (Only allowed for non‑null arrays or maybe‑null arrays with excludeNullish)
 export function keyBy<
   T extends object,
   K extends keyof T,
@@ -68,8 +69,17 @@ export function keyBy<
 ): Map<T[K], V>;
 
 /* -----------------------------------------------------
-   KEYBY: function-based key, no value getter
+   KEYBY: function‑based key, no value getter
 ------------------------------------------------------ */
+// Overload for non‑null array: callback receives T
+export function keyBy<
+  T extends object,
+  K
+>(
+  items: T[],
+  key: (item: T, index: number) => K
+): Map<K, T>;
+// Overloads for maybe‑null arrays:
 export function keyBy<
   T extends object,
   K
@@ -88,8 +98,19 @@ export function keyBy<
 ): Map<K, T | null | undefined>;
 
 /* -----------------------------------------------------
-   KEYBY: function-based key, property-based value
+   KEYBY: function‑based key, property‑based value
 ------------------------------------------------------ */
+// Overload for non‑null array: callback receives T
+export function keyBy<
+  T extends object,
+  K,
+  V extends keyof T
+>(
+  items: T[],
+  key: (item: T, index: number) => K,
+  value: V
+): Map<K, T[V]>;
+ // Overloads for maybe‑null arrays:
 export function keyBy<
   T extends object,
   K,
@@ -112,8 +133,19 @@ export function keyBy<
 ): Map<K, T[V] | null | undefined>;
 
 /* -----------------------------------------------------
-   KEYBY: function-based key, function-based value
+   KEYBY: function‑based key, function‑based value
 ------------------------------------------------------ */
+// Overload for non‑null array: callback receives T
+export function keyBy<
+  T extends object,
+  K,
+  V
+>(
+  items: T[],
+  key: (item: T, index: number) => K,
+  value: (item: T, index: number) => V
+): Map<K, V>;
+// Overloads for maybe‑null arrays:
 export function keyBy<
   T extends object,
   K,
@@ -144,7 +176,7 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
   let valueGetter: any;
   let opts: ByOptions | undefined;
 
-  // Distinguish (value vs options)
+  // Distinguish between a value getter and an options object.
   if (typeof valueOrOpts === "object" && valueOrOpts !== null && !("call" in valueOrOpts)) {
     opts = valueOrOpts;
   } else if (typeof maybeOpts === "object" && maybeOpts !== null) {
@@ -158,21 +190,17 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
   const result = new Map<unknown, unknown>();
 
   (items as any[]).forEach((item, index) => {
-    if (excludeNullish && item == null) {
-      return; // skip
-    }
+    if (excludeNullish && item == null) return;
 
     let computedKey: unknown;
     if (typeof keyOrProp === "function") {
       computedKey = keyOrProp(item, index);
     } else {
-      // property-based
+      // property‑based key
       computedKey = item?.[keyOrProp];
     }
 
-    if (excludeNullish && computedKey == null) {
-      return; // skip
-    }
+    if (excludeNullish && computedKey == null) return;
 
     let computedValue: unknown;
     if (valueGetter == null) {
@@ -193,7 +221,7 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
    GROUPBY: same pattern of overloads
 ------------------------------------------------------------------ */
 
-/* ============= PROPERTY-BASED KEY, NO VALUE ============= */
+/* ============= PROPERTY‑BASED KEY, NO VALUE ============= */
 export function groupBy<
   T extends object,
   K extends keyof T
@@ -210,7 +238,7 @@ export function groupBy<
   options: { excludeNullish: true }
 ): Map<T[K], T[]>;
 
-/* ============= PROPERTY-BASED KEY, PROPERTY-BASED VALUE ============= */
+/* ============= PROPERTY‑BASED KEY, PROPERTY‑BASED VALUE ============= */
 export function groupBy<
   T extends object,
   K extends keyof T,
@@ -231,7 +259,7 @@ export function groupBy<
   options: { excludeNullish: true }
 ): Map<T[K], Array<T[V]>>;
 
-/* ============= PROPERTY-BASED KEY, FUNCTION-BASED VALUE ============= */
+/* ============= PROPERTY‑BASED KEY, FUNCTION‑BASED VALUE ============= */
 export function groupBy<
   T extends object,
   K extends keyof T,
@@ -252,7 +280,16 @@ export function groupBy<
   options: { excludeNullish: true }
 ): Map<T[K], V[]>;
 
-/* ============= FUNCTION-BASED KEY, NO VALUE ============= */
+/* ============= FUNCTION‑BASED KEY, NO VALUE ============= */
+// Overload for non‑null array: callback receives T
+export function groupBy<
+  T extends object,
+  K
+>(
+  items: T[],
+  key: (item: T, index: number) => K
+): Map<K, T[]>;
+// Overloads for maybe‑null arrays:
 export function groupBy<
   T extends object,
   K
@@ -270,7 +307,18 @@ export function groupBy<
   options?: { excludeNullish?: false | undefined }
 ): Map<K, Array<T | null | undefined>>;
 
-/* ============= FUNCTION-BASED KEY, PROPERTY-BASED VALUE ============= */
+/* ============= FUNCTION‑BASED KEY, PROPERTY‑BASED VALUE ============= */
+// Overload for non‑null array: callback receives T
+export function groupBy<
+  T extends object,
+  K,
+  V extends keyof T
+>(
+  items: T[],
+  key: (item: T, index: number) => K,
+  value: V
+): Map<K, Array<T[V]>>;
+// Overloads for maybe‑null arrays:
 export function groupBy<
   T extends object,
   K,
@@ -292,7 +340,18 @@ export function groupBy<
   options?: { excludeNullish?: false | undefined }
 ): Map<K, Array<T[V] | null | undefined>>;
 
-/* ============= FUNCTION-BASED KEY, FUNCTION-BASED VALUE ============= */
+/* ============= FUNCTION‑BASED KEY, FUNCTION‑BASED VALUE ============= */
+// Overload for non‑null array: callback receives T
+export function groupBy<
+  T extends object,
+  K,
+  V
+>(
+  items: T[],
+  key: (item: T, index: number) => K,
+  value: (item: T, index: number) => V
+): Map<K, Array<V>>;
+// Overloads for maybe‑null arrays:
 export function groupBy<
   T extends object,
   K,
