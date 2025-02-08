@@ -45,3 +45,27 @@ When responding with code, **please provide full file contents for changed files
 
 Below is a packaged snapshot of the current repository.
 [REPOMIX OUTPUT]
+
+
+---
+
+
+You've been helping me write a type-safe keyBy / groupBy utility. It's going well. We're getting along really, really well.
+ 
+
+I'd like to change the functionality. Let's introduce a new option parameter (optional, can be provided as 3rd or 4th argument, depending on value getter presence) with { excludeNullish: boolean }.
+Let's default to false (this changes the library's behavior in a breaking way, this is OK, we are still in dev.
+
+When false, we will no longer skip nullish values.
+When true, we will skip nullish values, AND drop items that have a nullish key.
+
+When false, we must disallow property name access when:
+* input array contains nullish items
+* specified property-name key getter would select possible nullish keys
+ 
+
+When responding with code, **please provide full file contents for changed files**, not snippets. You may use snippets during discussions, but if applicable, always provide full updated files. Unchanged files do not need to be returned.
+ 
+
+Below is a packaged snapshot of the current repository.
+[REPOMIX OUTPUT]
