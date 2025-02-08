@@ -2,15 +2,6 @@ export interface ByOptions {
   excludeNullish?: boolean;
 }
 
-/**
- * We define separate sets of overloads for property-based keys:
- *  - (1) Strict T[] with no excludeNullish
- *  - (2) (T | null | undefined)[] with excludeNullish:true
- *
- * Then we define the function-based key overloads, which
- * always allow (T | null | undefined)[] for items (with optional excludeNullish).
- */
-
 /* -----------------------------------------------------
    KEYBY: property-based key, no "value getter"
 ------------------------------------------------------ */
@@ -21,11 +12,6 @@ export function keyBy<
   items: T[],
   key: K
 ): Map<T[K], T>;
-
-/**
- * Same property-based key, but now the array can be
- * (T|null|undefined)[] only if excludeNullish: true
- */
 export function keyBy<
   T extends object,
   K extends keyof T
@@ -47,7 +33,6 @@ export function keyBy<
   key: K,
   value: V
 ): Map<T[K], T[V]>;
-
 export function keyBy<
   T extends object,
   K extends keyof T,
@@ -71,7 +56,6 @@ export function keyBy<
   key: K,
   value: (item: T, index: number) => V
 ): Map<T[K], V>;
-
 export function keyBy<
   T extends object,
   K extends keyof T,
@@ -84,9 +68,7 @@ export function keyBy<
 ): Map<T[K], V>;
 
 /* -----------------------------------------------------
-   KEYBY: function-based key (always pass (T|null|undefined)[])
-   because function-based keys do not require that T be
-   strictly non-null. The excludeNullish option is optional.
+   KEYBY: function-based key, no value getter
 ------------------------------------------------------ */
 export function keyBy<
   T extends object,
@@ -94,10 +76,20 @@ export function keyBy<
 >(
   items: (T | null | undefined)[],
   key: (item: T, index: number) => K,
-  options?: { excludeNullish?: boolean }
+  options: { excludeNullish: true }
 ): Map<K, T>;
+export function keyBy<
+  T extends object,
+  K
+>(
+  items: (T | null | undefined)[],
+  key: (item: T | null | undefined, index: number) => K,
+  options?: { excludeNullish?: false | undefined }
+): Map<K, T | null | undefined>;
 
-/* function-based key, property-based value */
+/* -----------------------------------------------------
+   KEYBY: function-based key, property-based value
+------------------------------------------------------ */
 export function keyBy<
   T extends object,
   K,
@@ -106,10 +98,22 @@ export function keyBy<
   items: (T | null | undefined)[],
   key: (item: T, index: number) => K,
   value: V,
-  options?: { excludeNullish?: boolean }
+  options: { excludeNullish: true }
 ): Map<K, T[V]>;
+export function keyBy<
+  T extends object,
+  K,
+  V extends keyof T
+>(
+  items: (T | null | undefined)[],
+  key: (item: T | null | undefined, index: number) => K,
+  value: V,
+  options?: { excludeNullish?: false | undefined }
+): Map<K, T[V] | null | undefined>;
 
-/* function-based key, function-based value */
+/* -----------------------------------------------------
+   KEYBY: function-based key, function-based value
+------------------------------------------------------ */
 export function keyBy<
   T extends object,
   K,
@@ -118,8 +122,18 @@ export function keyBy<
   items: (T | null | undefined)[],
   key: (item: T, index: number) => K,
   value: (item: T, index: number) => V,
-  options?: { excludeNullish?: boolean }
+  options: { excludeNullish: true }
 ): Map<K, V>;
+export function keyBy<
+  T extends object,
+  K,
+  V
+>(
+  items: (T | null | undefined)[],
+  key: (item: T | null | undefined, index: number) => K,
+  value: (item: T | null | undefined, index: number) => V,
+  options?: { excludeNullish?: false | undefined }
+): Map<K, V | null | undefined>;
 
 /* -----------------------------------------------------
    KEYBY IMPLEMENTATION
@@ -187,7 +201,6 @@ export function groupBy<
   items: T[],
   key: K
 ): Map<T[K], T[]>;
-
 export function groupBy<
   T extends object,
   K extends keyof T
@@ -207,7 +220,6 @@ export function groupBy<
   key: K,
   value: V
 ): Map<T[K], Array<T[V]>>;
-
 export function groupBy<
   T extends object,
   K extends keyof T,
@@ -229,7 +241,6 @@ export function groupBy<
   key: K,
   value: (item: T, index: number) => V
 ): Map<T[K], V[]>;
-
 export function groupBy<
   T extends object,
   K extends keyof T,
@@ -241,16 +252,25 @@ export function groupBy<
   options: { excludeNullish: true }
 ): Map<T[K], V[]>;
 
-/* ============= FUNCTION-BASED KEY (ALWAYS ALLOW NULLISH ITEMS) ============= */
+/* ============= FUNCTION-BASED KEY, NO VALUE ============= */
 export function groupBy<
   T extends object,
   K
 >(
   items: (T | null | undefined)[],
   key: (item: T, index: number) => K,
-  options?: { excludeNullish?: boolean }
+  options: { excludeNullish: true }
 ): Map<K, T[]>;
+export function groupBy<
+  T extends object,
+  K
+>(
+  items: (T | null | undefined)[],
+  key: (item: T | null | undefined, index: number) => K,
+  options?: { excludeNullish?: false | undefined }
+): Map<K, Array<T | null | undefined>>;
 
+/* ============= FUNCTION-BASED KEY, PROPERTY-BASED VALUE ============= */
 export function groupBy<
   T extends object,
   K,
@@ -259,9 +279,20 @@ export function groupBy<
   items: (T | null | undefined)[],
   key: (item: T, index: number) => K,
   value: V,
-  options?: { excludeNullish?: boolean }
+  options: { excludeNullish: true }
 ): Map<K, Array<T[V]>>;
+export function groupBy<
+  T extends object,
+  K,
+  V extends keyof T
+>(
+  items: (T | null | undefined)[],
+  key: (item: T | null | undefined, index: number) => K,
+  value: V,
+  options?: { excludeNullish?: false | undefined }
+): Map<K, Array<T[V] | null | undefined>>;
 
+/* ============= FUNCTION-BASED KEY, FUNCTION-BASED VALUE ============= */
 export function groupBy<
   T extends object,
   K,
@@ -270,10 +301,20 @@ export function groupBy<
   items: (T | null | undefined)[],
   key: (item: T, index: number) => K,
   value: (item: T, index: number) => V,
-  options?: { excludeNullish?: boolean }
+  options: { excludeNullish: true }
 ): Map<K, Array<V>>;
+export function groupBy<
+  T extends object,
+  K,
+  V
+>(
+  items: (T | null | undefined)[],
+  key: (item: T | null | undefined, index: number) => K,
+  value: (item: T | null | undefined, index: number) => V,
+  options?: { excludeNullish?: false | undefined }
+): Map<K, Array<V | null | undefined>>;
 
-/* ============= groupBy IMPLEMENTATION ============= */
+/* ============= GROUPBY IMPLEMENTATION ============= */
 export function groupBy(...args: any[]): Map<unknown, unknown[]> {
   const [items, keyOrProp, valueOrOpts, maybeOpts] = args;
 

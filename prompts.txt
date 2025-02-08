@@ -69,3 +69,19 @@ When responding with code, **please provide full file contents for changed files
 
 Below is a packaged snapshot of the current repository.
 [REPOMIX OUTPUT]
+
+
+---
+
+
+You've been helping me write a type-safe keyBy / groupBy utility. It's going well. We're getting along really, really, really well. 
+
+We just added an excludeNullish option that is working pretty well, but we need to adjust the types a bit. Currently, if the input array contains null/undefined, they are not represented in the callback arg type or the result type V in Map<K, V>.
+
+Also, if the key or value selectors (whether by name or function) return null or undefined, those should also be represented in the output type (K or V respectively).
+
+When responding with code, **please provide full file contents for changed files**, not snippets. You may use snippets during discussions, but if applicable, always provide full updated files. Unchanged files do not need to be returned.
+ 
+
+Below is a packaged snapshot of the current repository.
+[REPOMIX OUTPUT]
