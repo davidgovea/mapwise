@@ -20,9 +20,7 @@ const peopleMaybeNull: Array<Person | null | undefined> = [
   { id: 4, name: "Diana", group: "user" },
 ];
 
-/**
- * Derived non‑null array from peopleMaybeNull.
- */
+// Derive non‑null array from peopleMaybeNull.
 const people = peopleMaybeNull.filter(
   (p) => p != null
 );
@@ -82,6 +80,16 @@ describe("keyBy", () => {
       expect(result.get(1)).toBeNull();
       expect(result.get(2)).toBe("Bob");
     });
+
+    it("should overwrite earlier entries with later duplicate keys", () => {
+      const duplicateData = [
+        { id: 1, name: "First" },
+        { id: 1, name: "Second" }
+      ];
+      const result = keyBy(duplicateData, "id");
+      expect(result.size).toBe(1);
+      expect(result.get(1)?.name).toBe("Second");
+    });
   });
 
   describe("Using maybe‑null data with excludeNullish:true", () => {
@@ -135,7 +143,12 @@ describe("keyBy", () => {
     it("should have a callback parameter that is possibly null when using maybe‑null data without excludeNullish", () => {
       keyBy(peopleMaybeNull, (p) => {
         // p is inferred as Person|null|undefined.
-        // (Direct access to properties would be a type error without a check.)
+
+        try {
+          // @ts-expect-error testing unsafe access
+          p.id
+        } catch { /* Ignore runtime error */ }
+
         if (p) {
           const id: number = p.id;
           expect(typeof id).toBe("number");
@@ -148,6 +161,57 @@ describe("keyBy", () => {
       // @ts-expect-error — property‑based key usage is disallowed on maybe‑null arrays unless excludeNullish is set.
       keyBy(peopleMaybeNull, "id");
     });
+
+    it("should allow property‑based key usage on maybe‑null arrays with excludeNullish", () => {
+      // When excludeNullish is set, the function assumes all items are non‑null,
+      // so property‑based extraction is allowed.
+      keyBy(peopleMaybeNull, "id", { excludeNullish: true });
+    });
+
+    it("should error when using an array of non‑objects", () => {
+      // @ts-expect-error: keyBy expects an array of objects, not primitives.
+      keyBy([1, "foo"], "toString");
+    });
+  });
+
+  it("should return an empty map for an empty array", () => {
+    const result = keyBy([], "id");
+    expect(result.size).toBe(0);
+  });
+
+  it("should handle empty strings as valid keys/values", () => {
+    const data = [{ id: "", name: "EmptyKey" }];
+    const result = keyBy(data, "id");
+    expect(result.has("")).toBe(true);
+    expect(result.get("")).toEqual(data[0]);
+  });
+
+  it("should not mutate the input array", () => {
+    const data = [{ id: 1 }, { id: 2 }];
+    const copy = [...data];
+    keyBy(data, "id");
+    expect(data).toEqual(copy);
+  });
+
+  it("should handle non-primitive keys", () => {
+    const data = [{ id: 1 }, { id: 2 }];
+    const keyObj = { key: "obj" };
+    const result = keyBy(data, () => keyObj);
+    // Since the same object is used as the key, all entries should map to the last one.
+    expect(result.size).toBe(1);
+  });
+
+  it("should throw an error when non-array input is provided", () => {
+    // Here, we pass a string instead of an array.
+    expect(() => {
+      // @ts-expect-error: intentional misuse for testing purposes
+      keyBy("not an array", "id");
+    }).toThrow();
+
+    expect(() => {
+      // @ts-expect-error: intentional misuse for testing purposes
+      keyBy(42, "id");
+    }).toThrow();
   });
 });
 
@@ -240,6 +304,12 @@ describe("groupBy", () => {
     it("should have a callback parameter that is possibly null when using maybe‑null data without excludeNullish", () => {
       groupBy(peopleMaybeNull, (p) => {
         // p is inferred as Person|null|undefined.
+
+        try {
+          // @ts-expect-error testing unsafe access
+          p.id
+        } catch { /* Ignore runtime error */ }
+
         if (p) {
           const id: number = p.id;
         }
@@ -251,5 +321,32 @@ describe("groupBy", () => {
       // @ts-expect-error — property‑based key usage is disallowed on maybe‑null arrays unless excludeNullish is specified.
       groupBy(peopleMaybeNull, "group");
     });
+
+    it("should error when using an array of non‑objects", () => {
+      // @ts-expect-error: groupBy expects an array of objects, not primitives.
+      groupBy([1, "foo"], "valueOf");
+    });
+  });
+
+  it("should return an empty map for an empty array", () => {
+    const result = groupBy([], "group");
+    expect(result.size).toBe(0);
+  });
+
+  it("should preserve order in arrays", () => {
+    const data = [
+      { id: 1, group: "A" },
+      { id: 2, group: "B" },
+      { id: 3, group: "A" }
+    ];
+    const result = groupBy(data, "group");
+    expect(result.get("A")).toEqual([data[0], data[2]]);
+  });
+
+  it("should throw an error when non-array input is provided", () => {
+    expect(() => {
+      // @ts-expect-error: intentional misuse for testing purposes
+      groupBy({} as any, "group");
+    }).toThrow();
   });
 });
