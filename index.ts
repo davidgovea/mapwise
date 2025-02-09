@@ -5,164 +5,109 @@ export interface ByOptions {
 /* -----------------------------------------------------
    KEYBY: property‑based key, no "value transformer"
 ------------------------------------------------------ */
-export function keyBy<
-  T extends object,
-  K extends keyof T
->(
+export function keyBy<T extends object, K extends keyof T>(
   items: T[],
-  keyExtractor: K
+  keyExtractor: K,
 ): Map<T[K], T>;
-export function keyBy<
-  T extends object,
-  K extends keyof T
->(
+export function keyBy<T extends object, K extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: K,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<T[K], T>;
 
 /* -----------------------------------------------------
    KEYBY: property‑based key, property‑based value
 ------------------------------------------------------ */
-export function keyBy<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T
->(
+export function keyBy<T extends object, K extends keyof T, V extends keyof T>(
   items: T[],
   keyExtractor: K,
-  valueTransformer: V
+  valueTransformer: V,
 ): Map<T[K], T[V]>;
-export function keyBy<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T
->(
+export function keyBy<T extends object, K extends keyof T, V extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: K,
   valueTransformer: V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<T[K], T[V]>;
 
 /* -----------------------------------------------------
    KEYBY: property‑based key, function‑based value
 ------------------------------------------------------ */
 // (Only allowed for non‑null arrays or maybe‑null arrays with excludeNullish)
-export function keyBy<
-  T extends object,
-  K extends keyof T,
-  V
->(
+export function keyBy<T extends object, K extends keyof T, V>(
   items: T[],
   keyExtractor: K,
-  valueTransformer: (item: T, index: number) => V
+  valueTransformer: (item: T, index: number) => V,
 ): Map<T[K], V>;
-export function keyBy<
-  T extends object,
-  K extends keyof T,
-  V
->(
+export function keyBy<T extends object, K extends keyof T, V>(
   items: (T | null | undefined)[],
   keyExtractor: K,
   valueTransformer: (item: T, index: number) => V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<T[K], V>;
 
 /* -----------------------------------------------------
    KEYBY: function‑based key, no value transformer
 ------------------------------------------------------ */
 // Overload for non‑null array: callback receives T
-export function keyBy<
-  T extends object,
-  K
->(
+export function keyBy<T extends object, K>(
   items: T[],
-  keyExtractor: (item: T, index: number) => K
+  keyExtractor: (item: T, index: number) => K,
 ): Map<K, T>;
 // Overloads for maybe‑null arrays:
-export function keyBy<
-  T extends object,
-  K
->(
+export function keyBy<T extends object, K>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<K, T>;
-export function keyBy<
-  T extends object,
-  K
->(
+export function keyBy<T extends object, K>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
-  options?: { excludeNullish?: false | undefined }
+  options?: { excludeNullish?: false | undefined },
 ): Map<K, T | null | undefined>;
 
 /* -----------------------------------------------------
    KEYBY: function‑based key, property‑based value
 ------------------------------------------------------ */
-export function keyBy<
-  T extends object,
-  K,
-  V extends keyof T
->(
+export function keyBy<T extends object, K, V extends keyof T>(
   items: T[],
   keyExtractor: (item: T, index: number) => K,
-  valueTransformer: V
+  valueTransformer: V,
 ): Map<K, T[V]>;
- // Overloads for maybe‑null arrays:
-export function keyBy<
-  T extends object,
-  K,
-  V extends keyof T
->(
+// Overloads for maybe‑null arrays:
+export function keyBy<T extends object, K, V extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<K, T[V]>;
-export function keyBy<
-  T extends object,
-  K,
-  V extends keyof T
->(
+export function keyBy<T extends object, K, V extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   valueTransformer: V,
-  options?: { excludeNullish?: false | undefined }
+  options?: { excludeNullish?: false | undefined },
 ): Map<K, T[V] | null | undefined>;
 
 /* -----------------------------------------------------
    KEYBY: function‑based key, function‑based value
 ------------------------------------------------------ */
-export function keyBy<
-  T extends object,
-  K,
-  V
->(
+export function keyBy<T extends object, K, V>(
   items: T[],
   keyExtractor: (item: T, index: number) => K,
-  valueTransformer: (item: T, index: number) => V
+  valueTransformer: (item: T, index: number) => V,
 ): Map<K, V>;
 // Overloads for maybe‑null arrays:
-export function keyBy<
-  T extends object,
-  K,
-  V
->(
+export function keyBy<T extends object, K, V>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: (item: T, index: number) => V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<K, V>;
-export function keyBy<
-  T extends object,
-  K,
-  V
->(
+export function keyBy<T extends object, K, V>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   valueTransformer: (item: T | null | undefined, index: number) => V,
-  options?: { excludeNullish?: false | undefined }
+  options?: { excludeNullish?: false | undefined },
 ): Map<K, V | null | undefined>;
 
 /* -----------------------------------------------------
@@ -176,12 +121,12 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
 
   // Distinguish between a value transformer and an options object.
   if (
-    typeof valueTransformerOrOpts === "object" &&
+    typeof valueTransformerOrOpts === 'object' &&
     valueTransformerOrOpts !== null &&
-    !("call" in valueTransformerOrOpts)
+    !('call' in valueTransformerOrOpts)
   ) {
     opts = valueTransformerOrOpts;
-  } else if (typeof maybeOpts === "object" && maybeOpts !== null) {
+  } else if (typeof maybeOpts === 'object' && maybeOpts !== null) {
     valueTransformer = valueTransformerOrOpts;
     opts = maybeOpts;
   } else {
@@ -195,7 +140,7 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
     if (excludeNullish && item == null) return;
 
     let computedKey: unknown;
-    if (typeof keyExtractorOrProp === "function") {
+    if (typeof keyExtractorOrProp === 'function') {
       computedKey = keyExtractorOrProp(item, index);
     } else {
       // property‑based key extraction
@@ -207,7 +152,7 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
     let computedValue: unknown;
     if (valueTransformer == null) {
       computedValue = item;
-    } else if (typeof valueTransformer === "function") {
+    } else if (typeof valueTransformer === 'function') {
       computedValue = valueTransformer(item, index);
     } else {
       computedValue = item?.[valueTransformer];
@@ -224,151 +169,96 @@ export function keyBy(...args: any[]): Map<unknown, unknown> {
 ------------------------------------------------------------------ */
 
 /* ============= PROPERTY‑BASED KEY, NO VALUE ============= */
-export function groupBy<
-  T extends object,
-  K extends keyof T
->(
+export function groupBy<T extends object, K extends keyof T>(
   items: T[],
-  keyExtractor: K
+  keyExtractor: K,
 ): Map<T[K], T[]>;
-export function groupBy<
-  T extends object,
-  K extends keyof T
->(
+export function groupBy<T extends object, K extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: K,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<T[K], T[]>;
 
 /* ============= PROPERTY‑BASED KEY, PROPERTY‑BASED VALUE ============= */
-export function groupBy<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T
->(
+export function groupBy<T extends object, K extends keyof T, V extends keyof T>(
   items: T[],
   keyExtractor: K,
-  valueTransformer: V
+  valueTransformer: V,
 ): Map<T[K], Array<T[V]>>;
-export function groupBy<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T
->(
+export function groupBy<T extends object, K extends keyof T, V extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: K,
   valueTransformer: V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<T[K], Array<T[V]>>;
 
 /* ============= PROPERTY‑BASED KEY, FUNCTION‑BASED VALUE ============= */
-export function groupBy<
-  T extends object,
-  K extends keyof T,
-  V
->(
+export function groupBy<T extends object, K extends keyof T, V>(
   items: T[],
   keyExtractor: K,
-  valueTransformer: (item: T, index: number) => V
+  valueTransformer: (item: T, index: number) => V,
 ): Map<T[K], V[]>;
-export function groupBy<
-  T extends object,
-  K extends keyof T,
-  V
->(
+export function groupBy<T extends object, K extends keyof T, V>(
   items: (T | null | undefined)[],
   keyExtractor: K,
   valueTransformer: (item: T, index: number) => V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<T[K], V[]>;
 
 /* ============= FUNCTION‑BASED KEY, NO VALUE ============= */
 // Overload for non‑null array: callback receives T
-export function groupBy<
-  T extends object,
-  K
->(
+export function groupBy<T extends object, K>(
   items: T[],
-  keyExtractor: (item: T, index: number) => K
+  keyExtractor: (item: T, index: number) => K,
 ): Map<K, T[]>;
 // Overloads for maybe‑null arrays:
-export function groupBy<
-  T extends object,
-  K
->(
+export function groupBy<T extends object, K>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<K, T[]>;
-export function groupBy<
-  T extends object,
-  K
->(
+export function groupBy<T extends object, K>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
-  options?: { excludeNullish?: false | undefined }
+  options?: { excludeNullish?: false | undefined },
 ): Map<K, Array<T | null | undefined>>;
 
 /* ============= FUNCTION‑BASED KEY, PROPERTY‑BASED VALUE ============= */
-export function groupBy<
-  T extends object,
-  K,
-  V extends keyof T
->(
+export function groupBy<T extends object, K, V extends keyof T>(
   items: T[],
   keyExtractor: (item: T, index: number) => K,
-  valueTransformer: V
+  valueTransformer: V,
 ): Map<K, Array<T[V]>>;
-export function groupBy<
-  T extends object,
-  K,
-  V extends keyof T
->(
+export function groupBy<T extends object, K, V extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<K, Array<T[V]>>;
-export function groupBy<
-  T extends object,
-  K,
-  V extends keyof T
->(
+export function groupBy<T extends object, K, V extends keyof T>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   valueTransformer: V,
-  options?: { excludeNullish?: false | undefined }
+  options?: { excludeNullish?: false | undefined },
 ): Map<K, Array<T[V] | null | undefined>>;
 
 /* ============= FUNCTION‑BASED KEY, FUNCTION‑BASED VALUE ============= */
-export function groupBy<
-  T extends object,
-  K,
-  V
->(
+export function groupBy<T extends object, K, V>(
   items: T[],
   keyExtractor: (item: T, index: number) => K,
-  valueTransformer: (item: T, index: number) => V
+  valueTransformer: (item: T, index: number) => V,
 ): Map<K, Array<V>>;
-export function groupBy<
-  T extends object,
-  K,
-  V
->(
+export function groupBy<T extends object, K, V>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: (item: T, index: number) => V,
-  options: { excludeNullish: true }
+  options: { excludeNullish: true },
 ): Map<K, Array<V>>;
-export function groupBy<
-  T extends object,
-  K,
-  V
->(
+export function groupBy<T extends object, K, V>(
   items: (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   valueTransformer: (item: T | null | undefined, index: number) => V,
-  options?: { excludeNullish?: false | undefined }
+  options?: { excludeNullish?: false | undefined },
 ): Map<K, Array<V | null | undefined>>;
 
 /* ============= GROUPBY IMPLEMENTATION ============= */
@@ -379,12 +269,12 @@ export function groupBy(...args: any[]): Map<unknown, unknown[]> {
   let opts: ByOptions | undefined;
 
   if (
-    typeof valueTransformerOrOpts === "object" &&
+    typeof valueTransformerOrOpts === 'object' &&
     valueTransformerOrOpts !== null &&
-    !("call" in valueTransformerOrOpts)
+    !('call' in valueTransformerOrOpts)
   ) {
     opts = valueTransformerOrOpts;
-  } else if (typeof maybeOpts === "object" && maybeOpts !== null) {
+  } else if (typeof maybeOpts === 'object' && maybeOpts !== null) {
     valueTransformer = valueTransformerOrOpts;
     opts = maybeOpts;
   } else {
@@ -398,7 +288,7 @@ export function groupBy(...args: any[]): Map<unknown, unknown[]> {
     if (excludeNullish && item == null) return;
 
     let computedKey: unknown;
-    if (typeof keyExtractorOrProp === "function") {
+    if (typeof keyExtractorOrProp === 'function') {
       computedKey = keyExtractorOrProp(item, index);
     } else {
       computedKey = item?.[keyExtractorOrProp];
@@ -409,7 +299,7 @@ export function groupBy(...args: any[]): Map<unknown, unknown[]> {
     let computedValue: unknown;
     if (valueTransformer == null) {
       computedValue = item;
-    } else if (typeof valueTransformer === "function") {
+    } else if (typeof valueTransformer === 'function') {
       computedValue = valueTransformer(item, index);
     } else {
       computedValue = item?.[valueTransformer];
