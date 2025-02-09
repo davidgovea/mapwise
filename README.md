@@ -1,32 +1,32 @@
-# Keygie — A Type-Safe `keyBy` and `groupBy` for TypeScript
+# Mapwise — A Type-Safe `keyBy` and `groupBy` for TypeScript
 
-Keygie is a lightweight, type-safe utility library for TypeScript that provides two helper functions:
+Mapwise is a lightweight, type-safe utility library for TypeScript that provides two helper functions:
 
 - **`keyBy`**: Transform an array into a `Map` keyed by a specified property or computed value.  
-  Optionally, provide a "value getter" to choose what each map entry stores.
+  Optionally, provide a *value transformer* to choose what each map entry stores.
 - **`groupBy`**: Group array items into a `Map` where each key corresponds to an array of items sharing a common property or computed value.  
-  Optionally, provide a "value getter" to transform the grouped items however you’d like.
+  Optionally, provide a *value transformer* to transform the grouped items however you’d like.
 
 ## Features
 
 - **Type Safety:** Leverage TypeScript’s strong typing with overloads that enforce correct usage for property‑ or function‑based keys.
 - **Flexible Keying & Values:**  
-  - Provide a property name or callback function to determine the map/group keys.  
-  - *Optionally*, provide a property name or callback function to determine the stored values.
+  - Provide a property name or callback function to determine the map/group keys (a **key extractor**).  
+  - *Optionally*, provide a property name or callback function (a **value transformer**) to determine the stored values.
 - **Explicit Nullish Handling:** Fine‑grained control over whether you skip `null`/`undefined` items (via `excludeNullish: true`).
 
 ## Installation
 
-Install Keygie via npm:
+Install Mapwise via npm:
 
 ~~~bash
-npm install keygie
+npm install mapwise
 ~~~
 
 Or via yarn:
 
 ~~~bash
-yarn add keygie
+yarn add mapwise
 ~~~
 
 ## Usage
@@ -34,7 +34,7 @@ yarn add keygie
 ### Importing
 
 ~~~typescript
-import { keyBy, groupBy } from "keygie";
+import { keyBy, groupBy } from "mapwise";
 ~~~
 
 ### `keyBy` Examples
@@ -53,10 +53,10 @@ const items = [
 
 const mapById = keyBy(items, "id");
 // Without filtering, null/undefined items are included.
-// Depending on your data shape, this may affect the result when using property‑based key extraction.
+// When using property‑based key extraction, you may wish to set { excludeNullish: true }.
 ~~~
 
-#### Key by a Property with a Value Getter
+#### Key by a Property with a Value Transformer
 
 ~~~typescript
 const mapIdToName = keyBy(items, "id", "name");
@@ -68,7 +68,7 @@ const mapIdToName = keyBy(items, "id", "name");
 
 ~~~typescript
 const mapByCustom = keyBy(items, (item, index) => {
-  // Handle nullish items as needed.
+  // Use a key extractor callback. Handle nullish items as needed.
   return item ? item.id : index;
 });
 ~~~
@@ -82,39 +82,39 @@ const groupsByGroup = groupBy(items, "group");
 // Result: Map<string, Array<{ id: number; name: string; group: string }>>
 ~~~
 
-#### Group by a Property with a Value Getter
+#### Group by a Property with a Value Transformer
 
 ~~~typescript
 const groupsByGroupNames = groupBy(items, "group", "name");
 // Result: Map<string, string[]>
 ~~~
 
-#### Group by a Function with a Value Getter
+#### Group by a Function with a Value Transformer
 
 ~~~typescript
 const groupsByCustom = groupBy(
   items,
   (item, index) => (item ? item.group : "unknown"),
-  (item) => (item ? item.name.toUpperCase() : "N/A")
+  (item, index) => (item ? item.name.toUpperCase() : "N/A")
 );
 ~~~
 
 ## Handling Nullish Values
 
-Keygie includes `null` and `undefined` items by default. This means that all data—including nullish values—will appear in your results. To filter out any nullish items, keys, or values, pass the option `{ excludeNullish: true }`:
+Mapwise includes `null` and `undefined` items by default. This means that all data—including nullish values—will appear in your results. To filter out any nullish items, keys, or values, pass the option `{ excludeNullish: true }`:
 
 ~~~typescript
 const cleanedMap = keyBy(items, "id", { excludeNullish: true });
 const cleanedGroups = groupBy(items, "group", { excludeNullish: true });
 ~~~
 
-_Note:_ When working with arrays that might contain `null` or `undefined` values, using property-based key extraction without `{ excludeNullish: true }` is disallowed by TypeScript to ensure safety. If you need to handle such cases explicitly, use a function-based key getter and manage nullish values within your callback.
+_Note:_ When working with arrays that might contain `null` or `undefined` values, using property‑based key extraction without `{ excludeNullish: true }` is disallowed by TypeScript to ensure safety. If you need to handle such cases explicitly, use a function‑based key extractor and manage nullish values within your callback.
 
 ## Type-Checking and Overloads
 
-Keygie provides multiple overloads for both functions to cover a variety of use cases:
-- **Property-based keying:** Use a property name to extract keys and optionally values. When working with maybe-null arrays, you must specify `{ excludeNullish: true }` to use property-based extraction.
-- **Function-based keying:** Use a callback to compute keys (and/or values), giving you full control over handling nullish values.
+Mapwise provides multiple overloads for both functions to cover a variety of use cases:
+- **Property-based keying:** Use a property name to extract keys and optionally values. When working with maybe‑null arrays, you must specify `{ excludeNullish: true }` to use property‑based extraction.
+- **Function-based keying:** Use a callback to compute keys (and/or a value transformer), giving you full control over handling nullish values.
 
 Refer to the TypeScript definitions for detailed information on overloads and behaviors.
 

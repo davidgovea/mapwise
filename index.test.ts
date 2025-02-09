@@ -21,9 +21,7 @@ const peopleMaybeNull: Array<Person | null | undefined> = [
 ];
 
 // Derive non‑null array from peopleMaybeNull.
-const people = peopleMaybeNull.filter(
-  (p) => p != null
-);
+const people = peopleMaybeNull.filter((p) => p != null);
 
 //
 // ===================== KEYBY TESTS =====================
@@ -31,14 +29,14 @@ const people = peopleMaybeNull.filter(
 
 describe("keyBy", () => {
   describe("Using non‑null data (property‑/function‑based)", () => {
-    it("should create a map keyed by a property (\"id\")", () => {
+    it('should create a map keyed by a property', () => {
       const result = keyBy(people, "id");
       expect(result.size).toBe(4);
       expect(result.get(1)?.name).toBe("Alice");
       expect(result.get(3)?.group).toBe("admin");
     });
 
-    it("should create a map keyed by a property (\"name\")", () => {
+    it('should create a map keyed by a property', () => {
       const result = keyBy(people, "name");
       expect(result.size).toBe(4);
       expect(result.get("Bob")?.id).toBe(2);
@@ -50,13 +48,13 @@ describe("keyBy", () => {
       expect(result.get(1)).toBe("admin");
     });
 
-    it("should allow a function-based value getter", () => {
+    it("should allow a function-based value transformer", () => {
       const result = keyBy(people, "name", (p) => p.name.toUpperCase());
       expect(result.size).toBe(4);
       expect(result.get("Alice")).toBe("ALICE");
     });
 
-    it("should work with a function-based key callback", () => {
+    it("should work with a function-based key extractor", () => {
       // Use a callback that adds the array index to the id.
       const result = keyBy(people, (p, i) => p.id + i);
       expect(result.size).toBe(4);
@@ -74,7 +72,7 @@ describe("keyBy", () => {
       expect(result.get(4)?.name).toBe("Diana");
     });
 
-    it("should allow a value getter that returns nullish values", () => {
+    it("should allow a value transformer that returns nullish values", () => {
       // Return null for "Alice", and the name otherwise.
       const result = keyBy(people, "id", (p) => (p.name === "Alice" ? null : p.name), { excludeNullish: true });
       expect(result.get(1)).toBeNull();
@@ -112,7 +110,7 @@ describe("keyBy", () => {
       expect(result.get("Charlie")?.id).toBe(3);
     });
 
-    it("should allow function‑based key and value getters", () => {
+    it("should allow function‑based key extractor and value transformer", () => {
       const result = keyBy(peopleMaybeNull, (p) => p.id, (p) => p.group.toUpperCase(), { excludeNullish: true });
       expect(result.size).toBe(4);
       expect(result.get(1)).toBe("ADMIN");
@@ -121,7 +119,7 @@ describe("keyBy", () => {
 
   describe("Using maybe‑null data without excludeNullish (function‑based only)", () => {
     it("should include the nullish items in the output", () => {
-      // When using a function‑based key callback on a maybe‑null array,
+      // When using a function‑based key extractor on a maybe‑null array,
       // the callback receives the raw (possibly null) items.
       const result = keyBy(peopleMaybeNull, (_p, idx) => idx);
       expect(result.size).toBe(6);
@@ -221,7 +219,7 @@ describe("keyBy", () => {
 
 describe("groupBy", () => {
   describe("Using non‑null data (property‑/function‑based)", () => {
-    it("should group items by a property (\"group\")", () => {
+    it('should group items by a property', () => {
       const result = groupBy(people, "group");
       // There should be two groups: "admin" and "user"
       expect(result.size).toBe(2);
@@ -238,9 +236,9 @@ describe("groupBy", () => {
       expect(result.get("user")).toEqual(["Bob", "Diana"]);
     });
 
-    it("should allow function‑based key and value getters", () => {
+    it("should allow function‑based key extractor and value transformer", () => {
       // Group by even/odd id and return upper‑cased names.
-      const result = groupBy(people, (p) => p.id % 2 === 0, (p) => p.name.toUpperCase());
+      const result = groupBy(people, (p, i) => p.id % 2 === 0, (p, i) => p.name.toUpperCase());
       expect(result.get(true)).toEqual(["BOB", "DIANA"]);
       expect(result.get(false)).toEqual(["ALICE", "CHARLIE"]);
     });
@@ -254,7 +252,7 @@ describe("groupBy", () => {
       expect(result.get(2)?.[0].name).toBe("Bob");
     });
 
-    it("should allow a value getter that returns nullish values", () => {
+    it("should allow a value transformer that returns nullish values", () => {
       // For group "admin", return null for "Alice" and the name for others.
       const result = groupBy(people, "group", (p) => (p.name === "Alice" ? null : p.name), { excludeNullish: true });
       // The "admin" group should have [null, "Charlie"].
@@ -275,8 +273,8 @@ describe("groupBy", () => {
       expect(result.get("user")).toEqual([2, 4]);
     });
 
-    it("should allow function‑based key and value getters", () => {
-      const result = groupBy(peopleMaybeNull, (p) => p.id, (p) => p.name.toLowerCase(), { excludeNullish: true });
+    it("should allow function‑based key extractor and value transformer", () => {
+      const result = groupBy(peopleMaybeNull, (p, i) => p.id, (p, i) => p.name.toLowerCase(), { excludeNullish: true });
       // Each group here should be a one‑element array since keys (the id) are unique.
       expect(result.get(1)).toEqual(["alice"]);
       expect(result.get(3)).toEqual(["charlie"]);
