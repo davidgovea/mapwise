@@ -2,6 +2,19 @@
   "name": "mapwise",
   "module": "index.ts",
   "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./keyBy": "./dist/keyBy.js",
+    "./groupBy": "./dist/groupBy.js"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
