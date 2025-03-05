@@ -1,5 +1,10 @@
 # Mapwise — `keyBy` and `groupBy` for Maps in TypeScript
 
+![Tests](https://github.com/davidgovea/mapwise/actions/workflows/test.yml/badge.svg)
+![npm version](https://img.shields.io/npm/v/mapwise)
+![Bundle Size](https://img.shields.io/bundlephobia/minzip/mapwise)
+![License](https://img.shields.io/github/license/davidgovea/mapwise)
+
 Mapwise is a lightweight, type-safe utility library for TypeScript that provides two helper functions:
 
 - **`keyBy`**: Transform an array into a `Map` keyed by a specified property or computed value.  
@@ -36,6 +41,10 @@ _Not using Bun? Ehem.. I guess that's OK too.._
 
 ~~~typescript
 import { keyBy, groupBy } from "mapwise";
+
+// Or as separate ES modules:
+import { keyBy } from 'mapwise/keyBy';
+import { groupBy } from 'mapwise/groupBy';
 ~~~
 
 ### `keyBy` Examples
