@@ -118,4 +118,16 @@ describe('groupBy', () => {
       groupBy({} as any, 'group');
     }).toThrow();
   });
+  
+  it('should work with readonly arrays', () => {
+    const readonlyArray: readonly { readonly id: number, readonly group: string }[] = [
+      { id: 1, group: 'A' },
+      { id: 2, group: 'B' },
+      { id: 3, group: 'A' }
+    ];
+    const result = groupBy(readonlyArray, 'group');
+    expect(result.size).toBe(2);
+    expect(result.get('A')?.length).toBe(2);
+    expect(result.get('B')?.length).toBe(1);
+  });
 });

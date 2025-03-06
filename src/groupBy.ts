@@ -6,11 +6,11 @@ import type { ByOptions } from './types';
    - Values are arrays of full objects.
 ------------------------------------------------------ */
 export function groupBy<T extends object, K extends keyof T>(
-  items: T[],
+  items: readonly T[],
   keyExtractor: K,
 ): Map<T[K], T[]>;
 export function groupBy<T extends object, K extends keyof T>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: K,
   options: { excludeNullish: true },
 ): Map<T[K], T[]>;
@@ -21,12 +21,12 @@ export function groupBy<T extends object, K extends keyof T>(
    - Values are arrays of values extracted from another property.
 ------------------------------------------------------ */
 export function groupBy<T extends object, K extends keyof T, V extends keyof T>(
-  items: T[],
+  items: readonly T[],
   keyExtractor: K,
   valueTransformer: V,
 ): Map<T[K], Array<T[V]>>;
 export function groupBy<T extends object, K extends keyof T, V extends keyof T>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: K,
   valueTransformer: V,
   options: { excludeNullish: true },
@@ -38,12 +38,12 @@ export function groupBy<T extends object, K extends keyof T, V extends keyof T>(
    - Values are arrays of values computed by a transformer function.
 ------------------------------------------------------ */
 export function groupBy<T extends object, K extends keyof T, V>(
-  items: T[],
+  items: readonly T[],
   keyExtractor: K,
   valueTransformer: (item: T, index: number) => V,
 ): Map<T[K], V[]>;
 export function groupBy<T extends object, K extends keyof T, V>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: K,
   valueTransformer: (item: T, index: number) => V,
   options: { excludeNullish: true },
@@ -55,16 +55,16 @@ export function groupBy<T extends object, K extends keyof T, V>(
    - Values are arrays of full objects.
 ------------------------------------------------------ */
 export function groupBy<T extends object, K>(
-  items: T[],
+  items: readonly T[],
   keyExtractor: (item: T, index: number) => K,
 ): Map<K, T[]>;
 export function groupBy<T extends object, K>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   options: { excludeNullish: true },
 ): Map<K, T[]>;
 export function groupBy<T extends object, K>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   options?: { excludeNullish?: false | undefined },
 ): Map<K, Array<T | null | undefined>>;
@@ -75,18 +75,18 @@ export function groupBy<T extends object, K>(
    - Values are arrays of values extracted from a specified property.
 ------------------------------------------------------ */
 export function groupBy<T extends object, K, V extends keyof T>(
-  items: T[],
+  items: readonly T[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: V,
 ): Map<K, Array<T[V]>>;
 export function groupBy<T extends object, K, V extends keyof T>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: V,
   options: { excludeNullish: true },
 ): Map<K, Array<T[V]>>;
 export function groupBy<T extends object, K, V extends keyof T>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   valueTransformer: V,
   options?: { excludeNullish?: false | undefined },
@@ -98,18 +98,18 @@ export function groupBy<T extends object, K, V extends keyof T>(
    - Values are arrays of values computed by a transformer function.
 ------------------------------------------------------ */
 export function groupBy<T extends object, K, V>(
-  items: T[],
+  items: readonly T[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: (item: T, index: number) => V,
 ): Map<K, Array<V>>;
 export function groupBy<T extends object, K, V>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: (item: T, index: number) => K,
   valueTransformer: (item: T, index: number) => V,
   options: { excludeNullish: true },
 ): Map<K, Array<V>>;
 export function groupBy<T extends object, K, V>(
-  items: (T | null | undefined)[],
+  items: readonly (T | null | undefined)[],
   keyExtractor: (item: T | null | undefined, index: number) => K,
   valueTransformer: (item: T | null | undefined, index: number) => V,
   options?: { excludeNullish?: false | undefined },

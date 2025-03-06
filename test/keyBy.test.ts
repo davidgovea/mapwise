@@ -138,4 +138,15 @@ describe('keyBy', () => {
       keyBy('not an array', 'id');
     }).toThrow();
   });
+  
+  it('should work with readonly arrays', () => {
+    const readonlyArray: readonly { readonly id: number, readonly name: string }[] = [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' }
+    ];
+    const result = keyBy(readonlyArray, 'id');
+    expect(result.size).toBe(2);
+    expect(result.get(1)?.name).toBe('Alice');
+    expect(result.get(2)?.name).toBe('Bob');
+  });
 });
