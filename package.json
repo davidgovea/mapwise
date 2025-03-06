@@ -4,16 +4,31 @@
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./keyBy": "./dist/keyBy.js",
-    "./groupBy": "./dist/groupBy.js"
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "./keyBy": {
+      "require": "./dist/cjs/keyBy.js",
+      "import": "./dist/esm/keyBy.js",
+      "types": "./dist/esm/keyBy.d.ts"
+    },
+    "./groupBy": {
+      "require": "./dist/cjs/groupBy.js",
+      "import": "./dist/esm/groupBy.js",
+      "types": "./dist/esm/groupBy.d.ts"
+    }
   },
   "sideEffects": false,
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc"
+    "build:esm": "tsc",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build": "bun run build:esm && bun run build:cjs",
+    "typecheck": "tsc -p tsconfig.test.json"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
